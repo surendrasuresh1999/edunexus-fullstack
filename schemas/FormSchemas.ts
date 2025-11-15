@@ -15,3 +15,9 @@ export const dobSchema = z.string().nonempty("Date of Birth is required");
 export const phoneSchema = z.string().regex(/^[0-9]{10}$/, "Phone number must be 10 digits");
 
 export const addressSchema = z.string().min(5, "Address must be at least 5 characters");
+
+export const fatherNameSchema = z.string().min(2, "Father name is required").max(50, "name is too long");
+
+export const motherNameSchema = z.string().min(2, "Mother name is required").max(50, "name is too long");
+
+export const guardianPhoneSchema = z.string().regex(/^[0-9]{10}$/, "Phone number must be 10 digits");

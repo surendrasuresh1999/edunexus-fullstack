@@ -1,25 +1,31 @@
 "use client";
 
-import DateOfBirthPicker from "@/common/DateOfBirthPicker";
-import PlainSelectDropDown from "@/common/PlainSelectDropDown";
-import PlainTextArea from "@/common/PlainTextArea";
-import PlainTextInput from "@/common/PlainTextInput";
-import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import GuardianForm from "@/components/ui/custom/student-enroll/GuardianForm";
+import PersonalForm from "@/components/ui/custom/student-enroll/PersonalForm";
 import {
   addressSchema,
   classDropDownSchema,
   dobSchema,
   emailSchema,
+  fatherNameSchema,
   firstNameSchema,
   genderSchema,
+  guardianPhoneSchema,
   lastNameSchema,
+  motherNameSchema,
   phoneSchema,
 } from "@/schemas/FormSchemas";
 import { useState } from "react";
 import z from "zod";
 
-// ✅ Zod validation schema
 export const studentSchema = z.object({
+  // Student
   firstName: firstNameSchema,
   lastName: lastNameSchema,
   gender: genderSchema,
@@ -28,6 +34,15 @@ export const studentSchema = z.object({
   dob: dobSchema,
   phoneNumber: phoneSchema,
   address: addressSchema,
+
+  // Guardian
+  fatherName: fatherNameSchema,
+  motherName: motherNameSchema,
+  guardianPhone: guardianPhoneSchema,
+
+  //  Payment
+  amount: z.string().min(1, "Amount is required"),
+  paymentMode: z.enum(["cash", "card", "online"]),
 });
 
 type StudentFormData = z.infer<typeof studentSchema>;
@@ -46,8 +61,6 @@ const page = () => {
 
   const handleFieldChange = (field: keyof StudentFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // ✅ Immediately clear the error for this field if it exists
     setErrors((prevErrors) => {
       if (prevErrors[field]) {
         const { [field]: _, ...rest } = prevErrors;
@@ -57,8 +70,7 @@ const page = () => {
     });
   };
 
-  // ✅ Validate + log
-  const handleNext = () => {
+  const handleValidate = () => {
     const result = studentSchema.safeParse(formData);
 
     if (!result.success) {
@@ -67,7 +79,6 @@ const page = () => {
       result.error.issues.forEach((issue) => {
         const path = issue.path[0];
 
-        // ✅ Safely handle only string paths
         if (typeof path === "string") {
           newErrors[path] = issue.message;
         }
@@ -80,111 +91,63 @@ const page = () => {
     console.log("✅ Form data:", result.data);
   };
 
-  const classOptions: { label: string; value: string }[] = Array.from(
-    { length: 10 },
-    (_, i) => {
-      const grade = i + 1;
-      return ["A", "B", "C"].map((section) => ({
-        label: `${grade}-${section}`,
-        value: `${grade}-${section}`,
-      }));
-    }
-  ).flat();
   return (
-    <div className="bg-white p-6 rounded-md shadow-md">
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <PlainTextInput
-          id="firstName"
-          label="First Name"
-          value={formData.firstName}
-          onChange={(e) => handleFieldChange("firstName", e.target.value)}
-          error={errors.firstName}
-          placeholder="John"
-          required
-        />
+    <div>
+      <form>
+        <Accordion
+          type="multiple"
+          defaultValue={["item-1"]}
+          className="flex flex-col gap-3"
+        >
+          <AccordionItem
+            value="item-1"
+            className="bg-white shadow rounded-md px-4"
+          >
+            <AccordionTrigger className="text-xl text-gray-800">
+              Personal Information
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 text-balance">
+              <PersonalForm
+                formData={formData}
+                handleFieldChange={handleFieldChange}
+                errors={errors}
+                handleValidate={handleValidate}
+              />
+            </AccordionContent>
+          </AccordionItem>
 
-        <PlainTextInput
-          id="lastName"
-          label="Last Name"
-          value={formData.lastName}
-          onChange={(e) => handleFieldChange("lastName", e.target.value)}
-          error={errors.lastName}
-          placeholder="Doe"
-          required
-        />
+          <AccordionItem
+            value="item-2"
+            className="bg-white shadow rounded-md px-4"
+          >
+            <AccordionTrigger className="text-xl text-gray-800">Guardian Information</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 text-balance">
+              <GuardianForm
+                formData={formData}
+                handleFieldChange={handleFieldChange}
+                errors={errors}
+                handleValidate={handleValidate}
+              />
+            </AccordionContent>
+          </AccordionItem>
 
-        <PlainTextInput
-          id="email"
-          label="Email"
-          value={formData.email}
-          onChange={(e) => handleFieldChange("email", e.target.value)}
-          error={errors.email}
-          placeholder="john@example.com"
-          required
-        />
-  
-        <PlainSelectDropDown
-          id="gender"
-          label="Gender"
-          options={[
-            { label: "Male", value: "male" },
-            { label: "Female", value: "female" },
-            { label: "Other", value: "other" },
-          ]}
-          placeholder="Select gender"
-          value={formData.gender}
-          onChange={(value) => handleFieldChange("gender", value)}
-          error={errors.gender}
-          required
-        />
-
-        <DateOfBirthPicker
-          id="dob"
-          label="Date of Birth"
-          value={formData.dob ? new Date(formData.dob) : undefined}
-          onChange={(date) =>
-            handleFieldChange("dob", date ? date.toISOString() : "")
-          }
-          error={errors.dob}
-        />
-
-        <PlainTextInput
-          id="phoneNumber"
-          label="Phone Number"
-          value={formData.phoneNumber}
-          onChange={(e) => handleFieldChange("phoneNumber", e.target.value)}
-          error={errors.phoneNumber}
-          placeholder="9876543210"
-          required
-        />
-
-        <PlainSelectDropDown
-          id="class"
-          label="Class"
-          options={classOptions}
-          placeholder="Choose class"
-          value={formData.class}
-          onChange={(value) => handleFieldChange("class", value)}
-          error={errors.class}
-          required
-        />
-
-        <PlainTextArea
-          id="address"
-          label="Address"
-          placeholder="Enter student's full address"
-          value={formData.address}
-          onChange={(e) => handleFieldChange("address", e.target.value)}
-          error={errors.address}
-          required
-        />
+          <AccordionItem
+            value="item-3"
+            className="bg-white shadow rounded-md px-4"
+          >
+            <AccordionTrigger>Payment</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 text-balance">
+              <p>Our flagship product combines cutting-edge technology...</p>
+              <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi
+                dolores expedita excepturi reprehenderit nesciunt deleniti a hic
+                labore necessitatibus et suscipit magnam id libero, temporibus
+                fugit corrupti nulla quis dolorum.
+              </p>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </form>
-
-      <div className="mt-6 text-right">
-        <Button type="button" onClick={handleNext}>
-          Next
-        </Button>
-      </div>
     </div>
   );
 };
