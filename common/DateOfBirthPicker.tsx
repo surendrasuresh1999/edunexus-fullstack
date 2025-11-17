@@ -37,7 +37,7 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
           <Button
             variant="outline"
             id={id}
-            className="justify-between font-normal w-full"
+            className="justify-between font-normal w-full py-5.5"
           >
             {value ? value.toLocaleDateString() : "Select date"}
             <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />

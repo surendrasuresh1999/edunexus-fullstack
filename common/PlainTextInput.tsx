@@ -7,6 +7,7 @@ interface PlainTextInputProps {
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void; 
   placeholder?: string;
   error?: string;
   required?: boolean;
@@ -17,6 +18,7 @@ const PlainTextInput = ({
   label,
   value,
   onChange,
+  onBlur,
   placeholder,
   error,
   required = false,
@@ -35,6 +37,7 @@ const PlainTextInput = ({
         type={type}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
         className={cn(error ? "border-red-500 focus:ring-red-500" : "")}
       />

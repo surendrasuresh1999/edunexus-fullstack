@@ -10,40 +10,52 @@ const GuardianForm = ({
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* FATHER NAME */}
         <PlainTextInput
           id="fatherName"
-          label="Father Name"
+          label="Father's Name"
           value={formData.fatherName}
           onChange={(e) => handleFieldChange("fatherName", e.target.value)}
           error={errors.fatherName}
-          placeholder="John"
+          placeholder="John Doe Sr."
           required
         />
 
+        {/* MOTHER NAME */}
         <PlainTextInput
           id="motherName"
-          label="Mother Name"
+          label="Mother's Name"
           value={formData.motherName}
           onChange={(e) => handleFieldChange("motherName", e.target.value)}
           error={errors.motherName}
-          placeholder="Doe"
+          placeholder="Jane Doe"
           required
         />
 
+        {/* GUARDIAN PHONE */}
         <PlainTextInput
           id="guardianPhone"
-          label="guardianPhone"
+          label="Guardian Phone Number"
           value={formData.guardianPhone}
           onChange={(e) => handleFieldChange("guardianPhone", e.target.value)}
           error={errors.guardianPhone}
           placeholder="9876543210"
           required
         />
+        <PlainTextInput
+          id="guardianEmail"
+          label="Guardian Email (Optional)"
+          value={formData.guardianEmail || ""}
+          onChange={(e) => handleFieldChange("guardianEmail", e.target.value)}
+          error={errors.guardianEmail}
+          placeholder="guardian@example.com"
+        />
       </div>
 
+      {/* VALIDATE BUTTON */}
       <div className="mt-6 text-right">
         <Button type="button" onClick={handleValidate}>
-          Validate
+          Validate Gardian Details
         </Button>
       </div>
     </div>
