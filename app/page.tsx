@@ -76,7 +76,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="text-center px-6 py-24 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+      <section className="text-center px-6 py-24 bg-linear-to-r from-blue-600 to-indigo-600 text-white">
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-4"
           initial={{ opacity: 0 }}
